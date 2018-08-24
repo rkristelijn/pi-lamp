@@ -21,8 +21,42 @@ pi@raspberry:~/Downloads $ sudo dpkg -i code_1.26.1-1534444677_i386.deb
 
 [reference](https://linuxconfig.org/how-to-install-mysql-community-server-on-debian-9-stretch-linux)
 
-not sure why mysql-client mysql-server won't do `sudo apt-get install mysql-client mysql-server`
+not sure why mysql-client mysql-server won't do `sudo apt-get install mysql-client mysql-server` you could add ` -y` I guess to skip questions.
 
 ```bash
-raspbian-stretch-clean-install
+pi@raspberry:~ $ sudo mysql -p
+Enter password: <empty password by default>
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 3
+Server version: 10.1.26-MariaDB-0+deb9u1 Debian 9.1
+
+Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> SELECT DATABASE();
++------------+
+| DATABASE() |
++------------+
+| NULL       |
++------------+
+1 row in set (0.00 sec)
+
+MariaDB [(none)]> exit
+Bye
 ```
+
+# Apache
+
+[reference](https://www.cyberciti.biz/faq/how-to-install-linux-apache-mysql-php-lamp-stack-on-debian-9-stretch/)
+
+Install apache by:
+`sudo apt-get install apache2 -y`
+
+Now you can open up a browser window from shell:
+
+`chromium localhost`
+
+And press ALT+F4 to close the window again
+
+# PHP
