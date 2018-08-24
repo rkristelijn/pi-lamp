@@ -59,4 +59,21 @@ Now you can open up a browser window from shell:
 
 And press ALT+F4 to close the window again
 
+The system configures Apache to start automatically after boot.
+
+Take note of `sudo mysql_secure_installation`
+
 # PHP
+
+`sudo apt install php7.0 libapache2-mod-php7.0 php7.0-mysql php7.0-gd php7.0-opcache -y`
+
+`sudo systemctl restart apache2` needed? -> Nope
+`sudo vi /var/www/html/phpinfo.php`
+
+```php
+<?php phpinfo(); ?>
+```
+
+`chromium localhost/phpinfo.php`
+
+# Import DB
