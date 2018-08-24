@@ -63,6 +63,8 @@ The system configures Apache to start automatically after boot.
 
 Take note of `sudo mysql_secure_installation`
 
+If we skip this, we can't create databases in phpmyadmin
+
 # PHP
 
 `sudo apt install php7.0 libapache2-mod-php7.0 php7.0-mysql php7.0-gd php7.0-opcache -y`
@@ -75,5 +77,157 @@ Take note of `sudo mysql_secure_installation`
 ```
 
 `chromium localhost/phpinfo.php`
+
+# PHPMyAdmin
+
+[reference](https://pimylifeup.com/raspberry-pi-mysql-phpmyadmin/)
+
+`sudo apt-get install phpmyadmin -y`
+
+complete wizard
+e.g. I used 'admin' as password for user phpmyadmin
+
+`sudo nano /etc/apache2/apache2.conf`
+7b. Now at the bottom of this file enter the following line:
+
+`Include /etc/phpmyadmin/apache.conf`
+Once done save & exit by pressing CTRL +X and then y.
+
+Now restart the Apache service by entering the following command:
+
+`sudo /etc/init.d/apache2 restart`
+
+`chromium localhost/phpmyadmin` phpmyadmin:admin
+
+phpmyadmin can't create databases, and won't allow root to login to phpmyadmin. 
+
+Solutions:
+1. allow database creation by phpmyadmin user...
+2. Update AllowNoPassword
+3. Set pw for root
+
+I choose 1
+
+```bash
+pi@raspberry:/etc/phpmyadmin $ sudo mysql -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 10
+Server version: 10.1.26-MariaDB-0+deb9u1 Debian 9.1
+
+Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> GRANT ALL PRIVILEGES ON * . * TO 'phpmyadmin'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> 
+
+```
+
+# Configuring MySQL
+
+[references](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql)
+
+```bash
+
+```
+
+```SQL
+CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+`/var/www/html/mysqltest.php`
+```php
+/*
+** Connect to database:
+*/
+ 
+// connect to the database
+$con = mysql_connect('localhost','newuser','password') 
+    or die('Could not connect to the server!');
+ 
+// select a database:
+mysql_select_db('testdb') 
+    or die('Could not select a database.');
+ 
+ 
+/*
+** Fetch some rows from database:
+*/
+ 
+// read username from URL
+$username = $_GET['username'];
+ 
+// escape bad chars:
+$username = mysql_real_escape_string($username);
+ 
+// build query:
+$sql = "SELECT id, timestamp, text FROM logs WHERE username = '$username'";
+ 
+// execute query:
+$result = mysql_query($sql) 
+    or die('A error occured: ' . mysql_error());
+ 
+// get result count:
+$count = mysql_num_rows($result);
+print "Showing $count rows:<hr/>";
+ 
+// fetch results:
+while ($row = mysql_fetch_assoc($result)) {
+    $row_id = $row['id'];
+    $row_text = $row['text'];
+ 
+    print "#$row_id: $row_text<br/>\n";
+}
+ 
+ 
+/*
+** Do a insert query:
+*/
+ 
+// create SQL query:
+$sql = "INSERT INTO logs (timestamp, text) VALUES (NOW(), 'some text here!')";
+ 
+// execute query:
+$result = mysql_query($sql) or die('A error occured: ' . mysql_error());
+ 
+// get the new ID of the last insert command
+$new_id = mysql_insert_id();
+ 
+ 
+ 
+/*
+** Do a update query:
+*/
+ 
+// create SQL query:
+$sql = "UPDATE logs SET text='New text!' WHERE id='1'";
+ 
+// execute query:
+$result = mysql_query($sql) or die('A error occured: ' . mysql_error());
+ 
+ 
+ 
+/*
+** Do a delete query:
+*/
+ 
+// create SQL query:
+$sql = "DELETE FROM logs WHERE id='1'";
+ 
+// execute query:
+$result = mysql_query($sql) or die('A error occured: ' . mysql_error());
+ 
+ 
+ 
+// Have fun!
+```
 
 # Import DB
