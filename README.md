@@ -231,3 +231,6 @@ $result = mysql_query($sql) or die('A error occured: ' . mysql_error());
 ```
 
 # Import DB
+
+# SSL / HTTPS
+[reference](https://hallard.me/enable-ssl-for-apache-server-in-5-minutes/)
